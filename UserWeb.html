@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="css/Login.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录系统</title>
+</head>
+<style>
+    .BtnLogin{
+    border:0;
+    height: 30px;
+    width: 150px;
+    color: white;
+    margin-top: 25px;
+    border-radius: 19px;
+    background-image: linear-gradient(-225deg, #22E1FF 0%, #1D8FE1 48%, #625EB1 100%);
+
+    }
+</style>
+<body>
+    <div class="LoginBox">
+        <div class="inputUserAndPwd">
+            <p>登录进行学生人脸识别</p>
+        </div>
+        
+        <input type="button" class="BtnLogin" value="登陆" onclick="detectVersion()"/>
+    </div>
+</body>
+<script>
+    function detectVersion() {
+            let isAndroid,isIOS,isIOS9,version,
+                u = navigator.userAgent,
+                ua = u.toLowerCase();
+  
+            if (u.indexOf('Android') > -1 || u.indexOf('Linux') > -1) {   //android终端或者uc浏览器
+                //Android系统
+                isAndroid = true
+            }
+  
+            if(ua.indexOf("like mac os x") > 0){
+                //ios
+                var regStr_saf = /os [\d._]*/gi ;
+                var verinfo = ua.match(regStr_saf) ;
+                version = (verinfo+"").replace(/[^0-9|_.]/ig,"").replace(/_/ig,".");
+            }
+            var version_str = version+"";
+            if(version_str != "undefined" && version_str.length >0){
+                version = parseInt(version)
+                if(version>=8){
+                    // ios9以上
+                    isIOS9 = true
+                }
+                else{
+                    isIOS = true
+                }
+            }
+            return {isAndroid,isIOS,isIOS9}
+          }
+  
+          // 判断手机上是否安装了app，如果安装直接打开url，如果没安装，执行callback
+          function openApp(url,callback) {
+              let {isAndroid,isIOS,isIOS9} = detectVersion()
+              if(isAndroid || isIOS){
+                  var timeout, t = 4000, hasApp = true;  
+                  var openScript = setTimeout(function () {  
+                      if (!hasApp) {
+                          callback && callback()
+                      }
+                      document.body.removeChild(ifr);  
+                  }, 5000)  
+                  
+                  var t1 = Date.now();  
+                  var ifr = document.createElement("iframe");  
+                  ifr.setAttribute('src', url);  
+                  ifr.setAttribute('style', 'display:none');  
+                  document.body.appendChild(ifr);  
+  
+                  timeout = setTimeout(function () {  
+                      var t2 = Date.now();  
+                      if (t2 - t1 < t + 100) {  
+                          hasApp = false;
+                      }
+                  }, t);
+              }
+  
+              if(isIOS9){
+                  location.href = url;
+                  setTimeout(function() {   
+                      callback && callback()
+                  }, 250);
+                  setTimeout(function() {
+                      location.reload();
+                  }, 1000);
+              }  
+          }
+          
+          //跳h5
+          function goConfirmAddr(){
+              window.location.href = 'http://m.gaotu100.com'
+          }
+          window.onload = function(){
+              openApp("superclass://home",goConfirmAddr)
+          }
+  </script>
+</html>
